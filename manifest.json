@@ -1,19 +1,20 @@
 {
   "manifest_version": 3,
-  "name": "Naukri Plugin",
+  "name": "Naukri Profile Editor",
   "version": "1.0",
-  "description": "A Chrome extension for enhancing Naukri.com experience.",
-  "permissions": ["storage"],
-  "host_permissions": ["https://*.naukri.com/*"],
+  "description": "A Chrome plugin to automate clicking the edit button on the Naukri profile page.",
+  "permissions": ["scripting"],
+  "host_permissions": ["https://www.naukri.com/mnjuser/profile"],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
     "default_popup": "popup.html"
+   
   },
   "content_scripts": [
     {
-      "matches": ["https://*.naukri.com/*"],
+      "matches": ["https://www.naukri.com/mnjuser/profile"],
       "js": ["content.js"]
     }
   ]

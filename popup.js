@@ -1,10 +1,10 @@
-document.getElementById('testButton').addEventListener('click', () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        if (tabs[0].id) {
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('triggerAction').addEventListener('click', () => {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             chrome.scripting.executeScript({
                 target: { tabId: tabs[0].id },
                 files: ['content.js']
             });
-        }
+        });
     });
 });
