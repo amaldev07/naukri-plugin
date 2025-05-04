@@ -17,47 +17,66 @@ if (window.location.href.includes('https://www.naukri.com/mnjuser/profile')) {
         console.error('Target element not found.');
     }
 
+    let updateTimeout;
+    let isUpdated = false; // Flag to track if the textarea has been updated
+
     // Function to check and update the text in the textarea
-    const observer = new MutationObserver(() => {
-        const textarea = document.getElementById('resumeHeadlineTxt');
+    const updateTextarea = () => {
+        if (isUpdated) return; // Prevent further updates if already updated
 
-        if (textarea) {
-            observer.disconnect(); // Stop observing once the element is found
+        clearTimeout(updateTimeout); // Clear any pending calls
 
-            let text = textarea.value.trim();
+        updateTimeout = setTimeout(() => {
+            const textarea = document.getElementById('resumeHeadlineTxt');
 
-            if (text.endsWith('.')) {
-                // Remove the dot if it exists
-                textarea.value = text.slice(0, -1);
-                textarea.dispatchEvent(new Event('input', { bubbles: true }));
-                console.log('Removed the dot from the text area.');
-            } else {
-                // Add a dot if it doesn't exist
-                textarea.value = text + '.';
-                textarea.dispatchEvent(new Event('input', { bubbles: true }));
-                console.log('Added a dot to the text area.');
-            }
+            if (textarea) {
+                let text = textarea.value.trim();
 
-            // Simulate a full click event on the Save button
-            setTimeout(() => {
+                if (text.endsWith('.')) {
+                    // Remove the dot if it exists
+                    textarea.value = text.slice(0, -1);
+                    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+                    textarea.dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log('Removed the dot from the text area.');
+                } else {
+                    // Add a dot if it doesn't exist
+                    textarea.value = text + '.';
+                    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+                    textarea.dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log('Added a dot to the text area.');
+                }
+
+                // Log the current value for debugging
+                console.log('Textarea value:', textarea.value);
+
+                isUpdated = true; // Mark as updated
+                observer.disconnect(); // Stop observing DOM changes
+
                 const saveButton = Array.from(document.querySelectorAll('button')).find(
                     button => button.textContent.trim() === 'Save'
-                )
+                );
+
                 if (saveButton) {
-                    saveButton.click();
-                    // const eventOptions = { bubbles: true, cancelable: true, view: window };
-                    // saveButton.dispatchEvent(new MouseEvent('mousedown', eventOptions));
-                    // saveButton.dispatchEvent(new MouseEvent('mouseup', eventOptions));
-                    // saveButton.dispatchEvent(new MouseEvent('click', eventOptions));
+                    const eventOptions = { bubbles: true, cancelable: true, view: window };
+                    saveButton.dispatchEvent(new MouseEvent('mousedown', eventOptions));
+                    saveButton.dispatchEvent(new MouseEvent('mouseup', eventOptions));
+                    saveButton.dispatchEvent(new MouseEvent('click', eventOptions));
                     console.log('Simulated a full click event on the Save button.');
                 } else {
                     console.error('Save button not found.');
                 }
-            }, 3000); // Delay to ensure the textarea is updated before clicking Save
-        }
+            } else {
+                console.error('Textarea not found. Retrying...');
+            }
+        }, 500); // Debounce delay of 500ms
+    };
+
+    const observer = new MutationObserver(() => {
+        updateTextarea();
     });
 
-    // Start observing the body for changes
     observer.observe(document.body, { childList: true, subtree: true });
 
+    // Initial call to update the textarea
+    updateTextarea();
 }
