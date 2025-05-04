@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Naukri Plugin",
+  "version": "1.0",
+  "description": "A Chrome extension for enhancing Naukri.com experience.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://*.naukri.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.naukri.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
